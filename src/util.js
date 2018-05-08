@@ -38,6 +38,38 @@ export const styleSvg = (style = {}, sourceProps) => {
   return style
 }
 
+export const styleSvgBad = (style = {}, sourceProps) => {
+  if (sourceProps === undefined) return style
+
+  if (sourceProps.options.fillBad) {
+    style.fill = _.isString(sourceProps.options.fillBad) ? sourceProps.options.fillBad : sourceProps.fillBad.color
+    style.fillOpacity = sourceProps.options.fillBad.alpha ? sourceProps.options.fillBad.alpha/100 : 1
+  }
+  if (sourceProps.options.strokeBad) {
+    style.stroke = _.isString(sourceProps.options.strokeBad) ? sourceProps.options.strokeBad : sourceProps.strokeBad.color
+    style.strokeOpacity = sourceProps.options.strokeBad.alpha ? sourceProps.strokeBad.alpha/100 : 1
+  }
+  if (sourceProps.strokeWidth)
+    style.strokeWidth = sourceProps.strokeWidth
+  return style
+}
+
+export const styleSvgGood = (style = {}, sourceProps) => {
+  if (sourceProps === undefined) return style
+
+  if (sourceProps.options.fillGood) {
+    style.fill = _.isString(sourceProps.options.fillGood) ? sourceProps.options.fillGood : sourceProps.fillGood.color
+    style.fillOpacity = sourceProps.options.fillGood.alpha ? sourceProps.options.fillGood.alpha/100 : 1
+  }
+  if (sourceProps.options.strokeGood) {
+    style.stroke = _.isString(sourceProps.options.strokeGood) ? sourceProps.options.strokeGood : sourceProps.strokeGood.color
+    style.strokeOpacity = sourceProps.options.strokeGood.alpha ? sourceProps.options.strokeGood.alpha/100 : 1
+  }
+  if (sourceProps.strokeWidth)
+    style.strokeWidth = sourceProps.strokeWidth
+  return style
+}
+
 export const fontAdapt = (fontProps) => {
 
   const fill = fontProps.color ? (_.isString(fontProps.color) ? fontProps.color : fontProps.color.color ) : fontProps.fill

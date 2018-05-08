@@ -17,9 +17,10 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import React, {Component} from 'react'
+import {TouchableOpacity} from 'react-native'
 import {Text as ReactText}  from 'react-native'
 import Svg,{ Circle, G } from 'react-native-svg'
-import { Options, styleSvg } from './util'
+import { Options, styleSvg, styleSvgGood, styleSvgBad } from './util'
 import Axis from './Axis'
 import GridAxis from './GridAxis'
 import _ from 'lodash'
@@ -101,6 +102,9 @@ export default class Scatterplot extends Component {
   }
 
   render() {
+
+    var self = this;
+
     const noDataMsg = this.props.noDataMessage || 'No data available'
     if (this.props.data === undefined) return (<ReactText>{noDataMsg}</ReactText>)
 
@@ -126,13 +130,39 @@ export default class Scatterplot extends Component {
       margin:options.margin
     }
 
-    const colors = styleSvg({},options)
-    const points = _.map(chart.curves, function (c) {
-      return _.map(c.line.path.points(),function(p,j) {
-        let render = <G key={'k' + j} x={p[0]} y={p[1]}>
-                    <Circle {...colors} cx={0} cy={0} r={options.r || 5} fillOpacity={1} />
-                </G>
+    // this.props.bad_section_x
+    // this.props.bad_section_y
+    // this.props.good_section_x
+    // this.props.good_section_y
 
+    //const colorsbad = styleSvgBad({},options);
+    var colors = styleSvg({},options);
+    //const colorsgood = styleSvgGood({},options);
+    const points = _.map(chart.curves, function (chartData) {
+      return _.map(chartData.line.path.points(),function(p,j) {
+
+
+        var scatterPoint = self.props.data[0][j];
+
+        if(scatterPoint.x_value < self.props.bad_section_x
+            && scatterPoint.y_value < self.props.bad_section_y) {
+          colors = styleSvgBad({},options);
+        } else if (scatterPoint.x_value > self.props.good_section_x
+            && scatterPoint.y_value > self.props.good_section_y) {
+          colors = styleSvgGood({},options);
+        } else {
+          colors = styleSvg({},options);
+        }
+
+        let render = <G key={'k' + j} x={p[0]} y={p[1]} onPress={() => self.props.scatterPointSelect(chartData, p, j)}>
+                        {
+                          self.props.data_selected_index === j
+                          && self.props.data_selected_index > 0 ?
+                            <Circle {...colors} cx={0} cy={0} r={options.r*1.5 || 15} fillOpacity={1} />
+                          :
+                            <Circle {...colors} cx={0} cy={0} r={options.r || 5} fillOpacity={1} />
+                        }
+                      </G>
         return render
       },this)
     },this)
